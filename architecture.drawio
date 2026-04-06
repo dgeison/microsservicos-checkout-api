@@ -31,23 +31,35 @@
                 <mxCell id="process" value="⚙️ checkout_process.py&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Orquestra chamadas&lt;br&gt;aos microsserviços em ordem&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E67E00;strokeColor=#FF9900;fontColor=#FFFFFF;fontSize=12;fontStyle=1;shadow=1;" parent="1" vertex="1">
                     <mxGeometry x="585" y="405" width="190" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="db" value="🗄️ BANCO DE DADOS&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Registra status de cada etapa&lt;br&gt;PENDING → SUCCESS / FAILED&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#1A5276;strokeColor=#4A90D9;fontColor=#FFFFFF;fontSize=12;fontStyle=1;shadow=1;" parent="1" vertex="1">
+                <mxCell id="db" value="🗄️ PostgreSQL&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;porta 5442 — registra status&lt;br&gt;PENDING → SUCCESS / FAILED&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#1A5276;strokeColor=#4A90D9;fontColor=#FFFFFF;fontSize=12;fontStyle=1;shadow=1;" parent="1" vertex="1">
                     <mxGeometry x="595" y="600" width="180" height="110" as="geometry"/>
                 </mxCell>
+                <mxCell id="grp_clients" value="HTTP CLIENTS (infra/client/)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2C3E50;strokeColor=#7F8C8D;fontColor=#FFFFFF;arcSize=5;verticalAlign=top;spacingTop=5;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="870" y="150" width="200" height="380" as="geometry"/>
+                </mxCell>
+                <mxCell id="pclient" value="payment_client.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#566573;strokeColor=#7F8C8D;fontColor=#FFFFFF;fontSize=11;fontStyle=1;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="885" y="195" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="iclient" value="inventory_client.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#566573;strokeColor=#7F8C8D;fontColor=#FFFFFF;fontSize=11;fontStyle=1;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="885" y="330" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="oclient" value="order_client.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#566573;strokeColor=#7F8C8D;fontColor=#FFFFFF;fontSize=11;fontStyle=1;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="885" y="450" width="160" height="50" as="geometry"/>
+                </mxCell>
                 <mxCell id="grp_services" value="MICROSSERVIÇOS (WireMock / Docker)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4A235A;strokeColor=#A569BD;fontColor=#FFFFFF;arcSize=5;verticalAlign=top;spacingTop=5;fontSize=11;fontStyle=1;" parent="1" vertex="1">
-                    <mxGeometry x="900" y="150" width="420" height="380" as="geometry"/>
+                    <mxGeometry x="1110" y="150" width="240" height="380" as="geometry"/>
                 </mxCell>
                 <mxCell id="payment" value="💳 PAYMENT&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;POST /payments/process&lt;br&gt;porta 8081 — cobra o cartão&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7D2D6F;strokeColor=#A569BD;fontColor=#FFFFFF;fontSize=12;fontStyle=1;shadow=1;" parent="1" vertex="1">
-                    <mxGeometry x="930" y="190" width="180" height="80" as="geometry"/>
+                    <mxGeometry x="1135" y="190" width="180" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="order" value="📋 ORDER&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;POST /orders&lt;br&gt;porta 8083 — cria o pedido&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7D2D6F;strokeColor=#A569BD;fontColor=#FFFFFF;fontSize=12;fontStyle=1;shadow=1;" parent="1" vertex="1">
-                    <mxGeometry x="930" y="310" width="180" height="80" as="geometry"/>
+                    <mxGeometry x="1135" y="420" width="180" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="inventory" value="📦 INVENTORY&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;POST /inventory/deduct&lt;br&gt;porta 8082 — baixa o estoque&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7D2D6F;strokeColor=#A569BD;fontColor=#FFFFFF;fontSize=12;fontStyle=1;shadow=1;" parent="1" vertex="1">
-                    <mxGeometry x="930" y="430" width="180" height="80" as="geometry"/>
+                    <mxGeometry x="1135" y="310" width="180" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="lifecycle" value="Ciclo de vida do Checkout&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;PENDING → PROCESSING_PAYMENT&lt;br&gt;→ PROCESSING_INVENTORY&lt;br&gt;→ CREATING_ORDER → SUCCESS / FAILED&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A5276;strokeColor=#4A90D9;fontColor=#FFFFFF;fontSize=12;fontStyle=1;shadow=1;" parent="1" vertex="1">
-                    <mxGeometry x="900" y="600" width="300" height="110" as="geometry"/>
+                <mxCell id="lifecycle" value="Ciclo de vida do Checkout&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;PENDING → payment → inventory → order&lt;br&gt;→ SUCCESS / FAILED&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A5276;strokeColor=#4A90D9;fontColor=#FFFFFF;fontSize=12;fontStyle=1;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="600" width="300" height="110" as="geometry"/>
                 </mxCell>
                 <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#27AE60;strokeWidth=2;" parent="1" source="site" target="cart" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -64,18 +76,27 @@
                 <mxCell id="e5" value="dados válidos" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#FF9900;strokeWidth=2;fontColor=default;fontSize=10;html=1;" parent="1" source="pydantic" target="process" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="e6" value="1º" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#A569BD;strokeWidth=2;fontColor=default;fontSize=10;html=1;" parent="1" source="process" target="payment" edge="1">
+                <mxCell id="e6" value="1º" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#A569BD;strokeWidth=2;fontColor=default;fontSize=10;html=1;" parent="1" source="process" target="pclient" edge="1">
                     <mxGeometry x="0.0286" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e7" value="2º" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#A569BD;strokeWidth=2;fontColor=default;fontSize=10;html=1;" parent="1" source="process" target="order" edge="1">
+                <mxCell id="e7" value="3º" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#A569BD;strokeWidth=2;fontColor=default;fontSize=10;html=1;" parent="1" source="process" target="oclient" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="e8" value="3º" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#A569BD;strokeWidth=2;fontColor=default;fontSize=10;html=1;" parent="1" source="process" target="inventory" edge="1">
+                <mxCell id="e8" value="2º" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#A569BD;strokeWidth=2;fontColor=default;fontSize=10;html=1;" parent="1" source="process" target="iclient" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
+                </mxCell>
+                <mxCell id="e_pc" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#A569BD;strokeWidth=1;" parent="1" source="pclient" target="payment" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_ic" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#A569BD;strokeWidth=1;" parent="1" source="iclient" target="inventory" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_oc" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#A569BD;strokeWidth=1;" parent="1" source="oclient" target="order" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="e9" value="salva status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#4A90D9;strokeWidth=2;dashed=1;fontColor=default;fontSize=10;html=1;" parent="1" source="process" target="db" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
