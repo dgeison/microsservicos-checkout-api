@@ -12,6 +12,7 @@ wheels/
 # Variáveis de ambiente — nunca suba senhas ou chaves no git
 .env
 .env.*
+!.env.example
 
 # VS Code
 .vscode/
