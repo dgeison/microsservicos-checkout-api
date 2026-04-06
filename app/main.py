@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
 load_dotenv()
 
 # Instância principal da aplicação FastAPI
-app = FastAPI(title="Checkout Commerce API", version="1.0.0")
+app = FastAPI(title="Checkout Commerce API", version="1.0.0", lifespan=lifespan)
 
 app.include_router(checkout_router)
 

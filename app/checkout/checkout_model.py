@@ -18,7 +18,7 @@ class Checkout(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     customer_email = Column(String(128), nullable=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc), nullable=False)
     payment_id = Column(String(64), nullable=True)
     order_id = Column(String(64), nullable=True)
     status = Column(String(24), default=CheckoutStatus.PENDING.value, nullable=False)

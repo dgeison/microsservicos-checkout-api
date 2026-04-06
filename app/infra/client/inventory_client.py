@@ -29,5 +29,7 @@ class InventoryClient:
         response.raise_for_status()
         return {"success": True, "error": None}
 
-    def get_inventory_client() -> InventoryClient:
-        return InventoryClient()
+
+
+def get_inventory_client() -> InventoryClient:
+    return InventoryClient()

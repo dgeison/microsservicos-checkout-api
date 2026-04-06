@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import BaseModel
 
 # BaseModel do Pydantic garante que os dados recebidos na requisição
@@ -23,7 +25,7 @@ class ShippingAddressRequest(BaseModel):
 
 class ItemRequest(BaseModel):
     # Representa um produto no carrinho
-    product_id: int
+    product_id: str
     quantity: int
     price: float
 
@@ -34,4 +36,4 @@ class CheckoutRequest(BaseModel):
     payment_method: PaymentMethodRequest
     customer_email: str
     shipping_address: ShippingAddressRequest
-    items: ItemRequest
+    items: List[ItemRequest]

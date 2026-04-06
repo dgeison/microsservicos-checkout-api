@@ -28,8 +28,9 @@ class PaymentClient:
         }
         response = await self.client.post("payments/process", json=payload)
         response.raise_for_status()
-        transaction_id = response.json().get("transaction_id")
+        transaction_id = response.json()["transactionId"]
         return {"transaction_id": transaction_id, "error": None}
 
-    def get_payment_client() -> PaymentClient:
-        return PaymentClient()
+
+def get_payment_client() -> PaymentClient:
+    return PaymentClient()

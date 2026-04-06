@@ -39,9 +39,11 @@ flowchart TD
 Cada etapa é persistida no banco — se algo falhar, sabemos exatamente onde parou:
 
 ```
-PENDING → PROCESSING_PAYMENT → PROCESSING_INVENTORY → CREATING_ORDER → SUCCESS
-                                                                       ↘ FAILED
+PENDING → chama Payment → chama Inventory → chama Order → SUCCESS
+                                                         ↘ FAILED (em qualquer etapa)
 ```
+
+A cada falha o status é atualizado para `FAILED` e o motivo é salvo no banco antes de retornar.
 
 ---
 
@@ -145,5 +147,6 @@ curl -X POST http://localhost:8081/payments/process \
 | **checkout_model.py** | Representa o Checkout no banco — registra status e onde falhou |
 | **lifespan (main.py)** | Evento de startup do FastAPI — garante que as tabelas existem antes de receber requisições |
 | **create_tables (dabase.py)** | Cria as tabelas via SQLAlchemy sem precisar rodar migrations manualmente |
+| **payment/inventory/order_client.py** | Clientes HTTP que chamam cada microsserviço; injetados via `Depends` do FastAPI |
 | **WireMock** | Permite desenvolver sem depender de sistemas externos reais |
 | **Docker** | Garante que o banco e os mocks rodam igual em qualquer máquina |

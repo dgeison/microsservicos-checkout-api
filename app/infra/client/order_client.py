@@ -40,8 +40,10 @@ class OrderClient:
         }
         response = await self.client.post("/orders", json=payload)
         response.raise_for_status()
-        transaction_id = response.json().get("order_id")
+        transaction_id = response.json().get("orderId")
         return {"order_id": transaction_id, "error": None}
 
-    def get_order_client() -> OrderClient:
-        return OrderClient()
+
+
+def get_order_client() -> OrderClient:
+    return OrderClient()
