@@ -1,0 +1,78 @@
+GET http://localhost:8085/health
+Content-Type: application/json
+
+### 
+
+GET http://localhost:8085/payment
+Content-Type: application/json
+
+
+###
+
+POST http://localhost:8081/payments/process
+Content-Type: application/json
+
+{
+    "amount": 1000.01,
+    "currency": "BRL",
+    "paymentMethod": {
+        "type": "credit_card",
+        "cardNumber": "411110000111111",
+        "expiryDate": "12/25",
+        "cvv": "123"
+    },
+    "customer": {
+        "id": "cust_001",
+        "name": "John Doe",
+        "email": "teste@teste.com.br"
+    }
+}
+
+###
+
+POST http://localhost:8082/inventory/deduct
+Content-Type: application/json
+
+{
+    "checkoutId": "chk_001",
+    "items": [
+        {
+            "productId": "prod_001",
+            "quantity": 2
+        },
+        {
+            "productId": "prod_002",
+            "quantity": 1
+        },
+        {
+            "productId": "prod_003",
+            "quantity": 5
+        }
+    ]
+}
+
+###
+
+POST http://localhost:8083/orders
+Content-Type: application/json
+
+{
+    "email": "teste@teste.com.br",
+    "street": "street",
+    "number": "123",
+    "complement": "complement",
+    "city": "city",
+    "state": "state",
+    "zipCode": "12345-678",
+    "checkoutId": "chk_001",
+    "items": [
+        {
+            "productId": "prod_001",
+            "quantity": 2
+        },
+        {
+            "productId": "prod_002",
+            "quantity": 1
+        }
+    ]
+}

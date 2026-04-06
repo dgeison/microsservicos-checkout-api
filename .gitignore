@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Variáveis de ambiente — nunca suba senhas ou chaves no git
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# Testes e cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+
+# uv
+.python-version
