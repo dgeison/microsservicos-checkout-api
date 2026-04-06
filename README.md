@@ -50,6 +50,7 @@ PENDING → PROCESSING_PAYMENT → PROCESSING_INVENTORY → CREATING_ORDER → S
 | Tecnologia | Papel |
 |---|---|
 | **FastAPI** | Framework web — recebe e roteia as requisições HTTP |
+| **httpx** | Cliente HTTP assíncrono — faz as chamadas reais aos microsserviços |
 | **Pydantic** | Valida os dados automaticamente (campo inválido = erro 422) |
 | **SQLAlchemy + asyncpg** | ORM assíncrono para persistência no PostgreSQL |
 | **WireMock** | Simula os microsserviços externos durante o desenvolvimento |
@@ -70,7 +71,11 @@ app/
 │   ├── checkout_request.py   # Modelos de entrada (Pydantic)
 │   └── checkout_model.py     # Modelo do banco (SQLAlchemy) + enum de status
 └── infra/
-    └── dabase.py             # Engine async, sessão e create_tables()
+    ├── dabase.py             # Engine async, sessão e create_tables()
+    └── client/
+        ├── payment_client.py   # HTTP client → Payment service (porta 8081)
+        ├── inventory_client.py # HTTP client → Inventory service (porta 8082)
+        └── order_client.py     # HTTP client → Order service (porta 8083)
 
 wiremock/
 ├── payment/mappings/         # Mock do serviço de pagamento (porta 8081)
