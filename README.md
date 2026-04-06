@@ -14,19 +14,19 @@ flowchart TD
     Site["🌐 Site"]
     Mobile["📱 Mobile"]
     Carrinho["🛒 Carrinho de Compras"]
-    Checkout["🐍 Checkout\nFastAPI — porta 8000"]
-    DB[("💾 Banco de Dados\n→ registra status de cada etapa")]
+    Checkout["🐍 Checkout\nFastAPI — porta 8085"]
+    DB[("💾 PostgreSQL\nporta 5442\n→ registra status de cada etapa")]
     Payment["💳 Payment\nporta 8081\n→ cobra o cartão"]
-    Order["📋 Order\nporta 8083\n→ cria o pedido"]
     Inventory["📦 Inventory\nporta 8082\n→ baixa o estoque"]
+    Order["📋 Order\nporta 8083\n→ cria o pedido"]
 
     Site --> Carrinho
     Mobile --> Carrinho
     Carrinho -->|"finaliza compra"| Checkout
     Checkout -->|"salva estado"| DB
     Checkout -->|"1º"| Payment
-    Checkout -->|"2º"| Order
-    Checkout -->|"3º"| Inventory
+    Checkout -->|"2º"| Inventory
+    Checkout -->|"3º"| Order
 ```
 
 > O diagrama completo com arquitetura e sequência de chamadas está em [`architecture.drawio`](architecture.drawio).  
