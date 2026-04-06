@@ -1,12 +1,20 @@
 import os
-
 from dotenv import load_dotenv
 from fastapi import FastAPI
-
 from app.checkout.router import router as checkout_router
+from contextlib import asynccontextmanager
+from app.infra.dabase import create_tables
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Manage application lifespan events"""
+    # Startup: Create database tables
+    await create_tables()
+    yield
+
 
 load_dotenv()
-
 
 # Instância principal da aplicação FastAPI
 app = FastAPI(title="Checkout Commerce API", version="1.0.0")

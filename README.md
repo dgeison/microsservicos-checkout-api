@@ -53,7 +53,8 @@ PENDING → PROCESSING_PAYMENT → PROCESSING_INVENTORY → CREATING_ORDER → S
 | **Pydantic** | Valida os dados automaticamente (campo inválido = erro 422) |
 | **SQLAlchemy + asyncpg** | ORM assíncrono para persistência no PostgreSQL |
 | **WireMock** | Simula os microsserviços externos durante o desenvolvimento |
-| **Docker** | Sobe os serviços WireMock de forma isolada e reproduzível |
+| **PostgreSQL** | Banco de dados relacional — persiste o estado de cada checkout |
+| **Docker** | Sobe o PostgreSQL e os serviços WireMock de forma isolada e reproduzível |
 | **uv** | Gerenciador de dependências Python |
 
 ---
@@ -62,14 +63,14 @@ PENDING → PROCESSING_PAYMENT → PROCESSING_INVENTORY → CREATING_ORDER → S
 
 ```
 app/
-├── main.py                   # Ponto de entrada da aplicação
+├── main.py                   # Ponto de entrada — lifespan cria as tabelas na startup
 ├── checkout/
 │   ├── router.py             # Rotas do checkout (POST /checkout/process)
 │   ├── checkout_process.py   # Orquestra as chamadas aos microsserviços
 │   ├── checkout_request.py   # Modelos de entrada (Pydantic)
-│   └── checkout_model.py     # Modelo do banco (SQLAlchemy)
+│   └── checkout_model.py     # Modelo do banco (SQLAlchemy) + enum de status
 └── infra/
-    └── dabase.py             # Configuração do banco de dados
+    └── dabase.py             # Engine async, sessão e create_tables()
 
 wiremock/
 ├── payment/mappings/         # Mock do serviço de pagamento (porta 8081)
@@ -81,11 +82,14 @@ wiremock/
 
 ## Como rodar
 
-### 1. Suba os serviços WireMock
+### 1. Suba o PostgreSQL e os serviços WireMock
 
 ```bash
 docker compose up -d
 ```
+
+> O PostgreSQL sobe na porta `5442` e o banco `checkout_db` é criado automaticamente.  
+> As tabelas são criadas pela própria aplicação na startup (via `lifespan`).
 
 ### 2. Configure o ambiente
 
@@ -134,5 +138,7 @@ curl -X POST http://localhost:8081/payments/process \
 | **router.py** | Separa as rotas do `main.py` — cada módulo cuida das suas próprias rotas |
 | **checkout_process.py** | Orquestra a lógica: chama pagamento, estoque e pedido na ordem certa |
 | **checkout_model.py** | Representa o Checkout no banco — registra status e onde falhou |
+| **lifespan (main.py)** | Evento de startup do FastAPI — garante que as tabelas existem antes de receber requisições |
+| **create_tables (dabase.py)** | Cria as tabelas via SQLAlchemy sem precisar rodar migrations manualmente |
 | **WireMock** | Permite desenvolver sem depender de sistemas externos reais |
-| **Docker** | Garante que os mocks rodam igual em qualquer máquina |
+| **Docker** | Garante que o banco e os mocks rodam igual em qualquer máquina |

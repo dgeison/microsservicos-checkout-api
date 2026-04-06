@@ -1,10 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum
-
 from sqlalchemy import Column, DateTime, Float, Integer, String
-
 from app.infra.dabase import Base
-
 
 class CheckoutStatus(Enum):
     """Enum representing the different states of a checkout process."""
@@ -15,7 +12,6 @@ class CheckoutStatus(Enum):
     PROCESSING_INVENTORY = "processing_inventory"
     CREATING_ORDER = "creating_order"
     FAILED = "failed"
-
 
 class Checkout(Base):
     __tablename__ = "checkouts"

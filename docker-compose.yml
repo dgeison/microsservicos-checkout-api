@@ -1,6 +1,22 @@
-version: '3.8'
+version: "3.8"
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: checkout-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: checkout_db
+    ports:
+      - "5442:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U checkout_user -d checkout_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Servidor WireMock simulando o serviço de pagamento
   # Acessível em http://localhost:8081
@@ -13,7 +29,15 @@ services:
       - ./wiremock/payment:/home/wiremock # mapeia os arquivos de mock locais para dentro do container
     command: ["--global-response-templating", "--verbose"]
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/__admin/mappings"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/__admin/mappings",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -29,7 +53,15 @@ services:
       - ./wiremock/inventory:/home/wiremock
     command: ["--global-response-templating", "--verbose"]
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/__admin/mappings"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/__admin/mappings",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -45,7 +77,18 @@ services:
       - ./wiremock/order:/home/wiremock
     command: ["--global-response-templating", "--verbose"]
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/__admin/mappings"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/__admin/mappings",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
+
+volumes:
+  postgres_data:
