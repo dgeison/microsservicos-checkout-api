@@ -38,10 +38,15 @@ class OrderClient:
                 for item in items
             ],
         }
-        response = await self.client.post("/orders", json=payload)
-        response.raise_for_status()
-        transaction_id = response.json().get("orderId")
-        return {"order_id": transaction_id, "error": None}
+        try:
+            response = await self.client.post("/orders", json=payload)
+            response.raise_for_status()
+            transaction_id = response.json().get("orderId")
+            return {"order_id": transaction_id, "error": None}
+        except httpx.HTTPStatusError as e:
+            return {"order_id": None, "error": e.response.text}
+        except Exception as e:
+            return {"order_id": None, "error": str(e)}
 
 
 
