@@ -244,6 +244,27 @@
                         <mxPoint x="125" y="700" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
+                <mxCell id="fail_label" value="CAMINHO DE FALHA (qualquer etapa)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontStyle=1;fontColor=#E74C3C;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="755" width="340" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="s_fail1" value="serviço indisponível / timeout / 4xx-5xx" style="html=1;strokeColor=#E74C3C;strokeWidth=1;endArrow=block;endFill=1;dashed=1;fontColor=default;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="785" y="790" as="sourcePoint"/>
+                        <mxPoint x="345" y="790" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s_fail2" value="salva FAILED + motivo" style="html=1;strokeColor=#E74C3C;strokeWidth=1;endArrow=block;endFill=1;dashed=1;fontColor=default;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="345" y="815" as="sourcePoint"/>
+                        <mxPoint x="565" y="815" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="s_fail3" value="HTTP 422 {checkout_id, error, message}" style="html=1;strokeColor=#E74C3C;strokeWidth=2;endArrow=open;dashed=1;fontColor=default;fontSize=10;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="345" y="840" as="sourcePoint"/>
+                        <mxPoint x="125" y="840" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>

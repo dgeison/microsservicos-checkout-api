@@ -43,6 +43,10 @@ class OrderClient:
             response.raise_for_status()
             transaction_id = response.json().get("orderId")
             return {"order_id": transaction_id, "error": None}
+        except httpx.ConnectError:
+            return {"order_id": None, "error": "Order service unavailable"}
+        except httpx.TimeoutException:
+            return {"order_id": None, "error": "Order service timeout"}
         except httpx.HTTPStatusError as e:
             return {"order_id": None, "error": e.response.text}
         except Exception as e:

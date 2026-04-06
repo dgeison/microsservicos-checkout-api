@@ -31,9 +31,12 @@ class PaymentClient:
             response.raise_for_status()
             transaction_id = response.json()["transactionId"]
             return {"transaction_id": transaction_id, "error": None}
+        except httpx.ConnectError:
+            return {"transaction_id": None, "error": "Payment service unavailable"}
+        except httpx.TimeoutException:
+            return {"transaction_id": None, "error": "Payment service timeout"}
         except httpx.HTTPStatusError as e:
-            error_response = e.response.text
-            return {"transaction_id": None, "error": error_response}
+            return {"transaction_id": None, "error": e.response.text}
         except Exception as e:
             return {"transaction_id": None, "error": str(e)}
 

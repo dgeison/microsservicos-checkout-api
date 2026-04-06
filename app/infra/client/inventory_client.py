@@ -29,6 +29,10 @@ class InventoryClient:
             response = await self.client.post("/inventory/deduct", json=payload)
             response.raise_for_status()
             return {"success": True, "error": None}
+        except httpx.ConnectError:
+            return {"success": False, "error": "Inventory service unavailable"}
+        except httpx.TimeoutException:
+            return {"success": False, "error": "Inventory service timeout"}
         except httpx.HTTPStatusError as e:
             return {"success": False, "error": e.response.text}
         except Exception as e:

@@ -138,6 +138,24 @@ curl -X POST http://localhost:8081/payments/process \
 
 ---
 
+## Resiliência — tratamento de falhas
+
+Cada client HTTP (`payment_client`, `inventory_client`, `order_client`) captura erros em camadas:
+
+| Exceção | Causa | Mensagem retornada |
+|---|---|---|
+| `ConnectError` | Serviço fora do ar / porta errada | `"... service unavailable"` |
+| `TimeoutException` | Serviço lento ou travado | `"... service timeout"` |
+| `HTTPStatusError` | Serviço respondeu com 4xx/5xx | corpo da resposta HTTP |
+| `Exception` | Qualquer outro erro inesperado | mensagem da exceção |
+
+Em qualquer falha o `checkout_process.py`:
+1. Atualiza o status para `FAILED` no banco
+2. Persiste a mensagem de erro
+3. Retorna `HTTP 422` com `checkout_id`, tipo do erro e mensagem detalhada
+
+---
+
 ## Por que cada peça existe?
 
 | Componente | Por que existe |
