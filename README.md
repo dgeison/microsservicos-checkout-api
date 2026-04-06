@@ -1,4 +1,9 @@
-# Checkout Commerce — Arquitetura
+# Checkout Commerce API
+
+Estudo de microsserviços com **FastAPI**, **WireMock** e **Docker**.  
+O projeto simula o fluxo completo de um checkout de e-commerce, orquestrando serviços de pagamento, estoque e pedido.
+
+---
 
 ## Como nasceu este projeto
 
@@ -24,23 +29,110 @@ flowchart TD
     Checkout -->|"3º"| Inventory
 ```
 
-## Ciclo de vida do Checkout no banco
+> O diagrama completo com arquitetura e sequência de chamadas está em [`architecture.drawio`](architecture.drawio).  
+> Abra com a extensão **Draw.io Integration** no VS Code ou em [app.diagrams.net](https://app.diagrams.net).
 
-Cada etapa é registrada — se algo falhar, sabemos exatamente onde parou:
+---
+
+## Ciclo de vida do Checkout
+
+Cada etapa é persistida no banco — se algo falhar, sabemos exatamente onde parou:
 
 ```
 PENDING → PROCESSING_PAYMENT → PROCESSING_INVENTORY → CREATING_ORDER → SUCCESS
                                                                        ↘ FAILED
 ```
 
+---
+
+## Stack
+
+| Tecnologia | Papel |
+|---|---|
+| **FastAPI** | Framework web — recebe e roteia as requisições HTTP |
+| **Pydantic** | Valida os dados automaticamente (campo inválido = erro 422) |
+| **SQLAlchemy + asyncpg** | ORM assíncrono para persistência no PostgreSQL |
+| **WireMock** | Simula os microsserviços externos durante o desenvolvimento |
+| **Docker** | Sobe os serviços WireMock de forma isolada e reproduzível |
+| **uv** | Gerenciador de dependências Python |
+
+---
+
+## Estrutura do projeto
+
+```
+app/
+├── main.py                   # Ponto de entrada da aplicação
+├── checkout/
+│   ├── router.py             # Rotas do checkout (POST /checkout/process)
+│   ├── checkout_process.py   # Orquestra as chamadas aos microsserviços
+│   ├── checkout_request.py   # Modelos de entrada (Pydantic)
+│   └── checkout_model.py     # Modelo do banco (SQLAlchemy)
+└── infra/
+    └── dabase.py             # Configuração do banco de dados
+
+wiremock/
+├── payment/mappings/         # Mock do serviço de pagamento (porta 8081)
+├── inventory/mappings/       # Mock do serviço de estoque (porta 8082)
+└── order/mappings/           # Mock do serviço de pedidos (porta 8083)
+```
+
+---
+
+## Como rodar
+
+### 1. Suba os serviços WireMock
+
+```bash
+docker compose up -d
+```
+
+### 2. Configure o ambiente
+
+```bash
+cp .env.example .env
+# edite o .env com suas configurações
+```
+
+### 3. Instale as dependências
+
+```bash
+uv sync
+```
+
+### 4. Suba a API
+
+```bash
+uv run python app/main.py
+```
+
+A API estará disponível em `http://localhost:8085`.  
+Documentação automática: `http://localhost:8085/docs`
+
+---
+
+## Testando os endpoints
+
+Use o arquivo [`request.http`](request.http) com a extensão **REST Client** do VS Code ou execute via curl:
+
+```bash
+# Health check
+curl http://localhost:8085/health
+
+# Processar checkout
+curl -X POST http://localhost:8081/payments/process \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 1000.01, "currency": "BRL"}'
+```
+
+---
+
 ## Por que cada peça existe?
 
 | Componente | Por que existe |
 |---|---|
-| **FastAPI** | Recebe as requisições HTTP e roteia para a função certa |
-| **Pydantic** | Valida os dados automaticamente — campo errado ou faltando = erro 422 sem código extra |
 | **router.py** | Separa as rotas do `main.py` — cada módulo cuida das suas próprias rotas |
 | **checkout_process.py** | Orquestra a lógica: chama pagamento, estoque e pedido na ordem certa |
 | **checkout_model.py** | Representa o Checkout no banco — registra status e onde falhou |
-| **WireMock** | Simula os microsserviços reais para desenvolvimento e testes sem subir sistemas externos |
-| **Docker** | Roda o WireMock de forma isolada e reproduzível em qualquer máquina |
+| **WireMock** | Permite desenvolver sem depender de sistemas externos reais |
+| **Docker** | Garante que os mocks rodam igual em qualquer máquina |
