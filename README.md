@@ -67,6 +67,7 @@ A cada falha o status é atualizado para `FAILED` e o motivo é salvo no banco a
 ```
 app/
 ├── main.py                   # Ponto de entrada — lifespan cria as tabelas na startup
+├── client_manager.py         # Gerencia o ciclo de vida dos clientes HTTP (startup/shutdown)
 ├── checkout/
 │   ├── router.py             # Rotas do checkout (POST /checkout/process)
 │   ├── checkout_process.py   # Orquestra as chamadas aos microsserviços
@@ -75,7 +76,7 @@ app/
 └── infra/
     ├── dabase.py             # Engine async, sessão e create_tables()
     └── client/
-        ├── payment_client.py   # HTTP client → Payment service (porta 8081)
+        ├── payment_client.py   # HTTP client → Payment service (porta 8081) com retry
         ├── inventory_client.py # HTTP client → Inventory service (porta 8082)
         └── order_client.py     # HTTP client → Order service (porta 8083)
 
@@ -154,6 +155,18 @@ Em qualquer falha o `checkout_process.py`:
 2. Persiste a mensagem de erro
 3. Retorna `HTTP 422` com `checkout_id`, tipo do erro e mensagem detalhada
 
+### Retry com Exponential Backoff (Payment)
+
+O `payment_client.py` tenta até **3 vezes** antes de desistir, com espera exponencial entre as tentativas:
+
+```
+Tentativa 1 → falha → aguarda 1s
+Tentativa 2 → falha → aguarda 2s
+Tentativa 3 → falha → retorna erro
+```
+
+> Erros 4xx (ex: cartão inválido) **não** são re-tentados — o problema está nos dados, não no serviço.
+
 ---
 
 ## Por que cada peça existe?
@@ -166,5 +179,6 @@ Em qualquer falha o `checkout_process.py`:
 | **lifespan (main.py)** | Evento de startup do FastAPI — garante que as tabelas existem antes de receber requisições |
 | **create_tables (dabase.py)** | Cria as tabelas via SQLAlchemy sem precisar rodar migrations manualmente |
 | **payment/inventory/order_client.py** | Clientes HTTP que chamam cada microsserviço; injetados via `Depends` do FastAPI |
+| **client_manager.py** | Cria os `httpx.AsyncClient` uma única vez no startup e fecha no shutdown — evita abrir conexão por requisição |
 | **WireMock** | Permite desenvolver sem depender de sistemas externos reais |
 | **Docker** | Garante que o banco e os mocks rodam igual em qualquer máquina |

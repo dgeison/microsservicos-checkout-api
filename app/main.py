@@ -1,8 +1,10 @@
 import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.concurrency import asynccontextmanager
+
+from app.client_manager import client_manager
 from app.checkout.router import router as checkout_router
-from contextlib import asynccontextmanager
 from app.infra.dabase import create_tables
 
 
@@ -11,7 +13,9 @@ async def lifespan(app: FastAPI):
     """Manage application lifespan events"""
     # Startup: Create database tables
     await create_tables()
+    await client_manager.startup()
     yield
+    await client_manager.shutdown()
 
 
 load_dotenv()
